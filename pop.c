@@ -1,36 +1,30 @@
 #include "monty.h"
 
 /**
- * pop - Function that remove the head of stack
- * @stack: stack structure
- * @line_number: Number of instructions
+ * pop - Removes the top element of the stack
+ * @stack: The head of the stack
+ * @line_number: The line on which the error occurred
+ *
+ * Return: Nothing
  */
 void pop(stack_t **stack, unsigned int line_number)
 {
-	stack_t *temp = NULL;
-	int n;
+	stack_t *current = *stack, *temp = NULL;
 
-	n = stack_len(*stack);
-	if (n <= 0)
+	if (*stack == NULL)
+		handle_error(ERR_POP_USG, NULL, line_number, NULL);
+
+	temp = current;
+	if (current->next)
 	{
-		fprintf(stderr, "L%d: can't pop an empty stack\n", line_number);
-		if (list_opcode != NULL)
-			free_list_opcode(list_opcode);
-		if (*stack != NULL)
-			free_list_stack(*stack);
-		exit(EXIT_FAILURE);
+		current = current->next;
+		current->prev = temp->prev;
+		*stack = current;
 	}
-
-	if ((*stack)->next == NULL)
+	else
 	{
-		free(*stack);
 		*stack = NULL;
-		return;
 	}
 
-	temp = *stack;
-	*stack = (*stack)->next;
-	(*stack)->prev = NULL;
 	free(temp);
-	temp = NULL;
 }
